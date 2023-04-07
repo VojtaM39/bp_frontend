@@ -5,7 +5,9 @@
         "outDir": "dist",
         "noUnusedLocals": false,
         "skipLibCheck": true,
-        "lib": ["DOM"]
+        "lib": ["DOM"],
+        "esModuleInterop": true,
+        "moduleResolution":"node"
     },
     "include": [
         "./src/**/*"

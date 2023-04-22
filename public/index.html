@@ -10,7 +10,10 @@
             <input type="file" id="file-picker" />
 
             <div class="video-player-container">
-                <video id="match-video"></video>
+                <div class="video-container">
+                    <canvas id="match-overlay"></canvas>
+                    <video id="match-video"></video>
+                </div>
 
                 <div id="video-controls" class="controls" data-state="hidden">
                     <button id="play-button" type="button" data-state="pause">Play/Pause</button>
@@ -19,6 +22,7 @@
                 </div>
             </div>
             <input type="button" id="recognize-court" value="Get court" />
+            <input type="button" id="video-analysis" value="Analyze video" />
         </div>
     </body>
 </html>

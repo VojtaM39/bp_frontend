@@ -1,20 +1,25 @@
+import { StateStore } from './state-store.js';
 
-export class EditorHandler {
+export class VideoPlayerHandler {
     private static readonly TIME_PICKER_STEPS = 100;
 
+    private _stateStore: StateStore;
     private _video: HTMLVideoElement;
     private _timeSlider: HTMLInputElement;
     private _filePicker: HTMLInputElement
     private _recognizeCourtButton: HTMLButtonElement;
+    private _videoAnalysisButton: HTMLButtonElement;
     private _matchVideo: HTMLVideoElement;
     private _playButton: HTMLButtonElement;
     private _currentTime: HTMLDivElement;
 
-    constructor() {
+    constructor(stateStore: StateStore) {
+        this._stateStore = stateStore;
         this._video = document.getElementById('match-video') as HTMLVideoElement;
         this._timeSlider = document.getElementById('time-slider') as HTMLInputElement;
         this._filePicker = document.getElementById('file-picker') as HTMLInputElement;
         this._recognizeCourtButton = document.getElementById('recognize-court') as HTMLButtonElement;
+        this._videoAnalysisButton = document.getElementById('video-analysis') as HTMLButtonElement;
         this._playButton = document.getElementById('play-button') as HTMLButtonElement;
         this._matchVideo = document.getElementById('match-video') as HTMLVideoElement;
         this._currentTime = document.getElementById('current-time') as HTMLDivElement;
@@ -22,8 +27,10 @@ export class EditorHandler {
 
     public registerEventHandlers() {
         this._handleVideoLoading();
+        this._handleVideoMetadataUpdate();
         this._handleVideoControls();
         this._handleCourtRecognitionSubmit();
+        this._handleVideoAnalysisSubmit();
         this._handleTimeSliderUpdate();
     }
 
@@ -32,6 +39,13 @@ export class EditorHandler {
             const file = (event.target as HTMLInputElement).files[0];
             this._video.src = URL.createObjectURL(file);
         });
+    }
+
+    private _handleVideoMetadataUpdate() {
+        this._video.onloadedmetadata = () => {
+            this._stateStore.videoLength = this._video.duration;
+            this._stateStore.videoTime = 0;
+        }
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/Guide/Audio_and_video_delivery/Video_player_styling_basics
@@ -59,14 +73,25 @@ export class EditorHandler {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                redirect: 'follow',
-                referrerPolicy: 'no-referrer',
                 body: JSON.stringify({ frame }),
             });
-            const json = response.json();
+            const { court } = await response.json();
+            this._stateStore.court = court;
+        });
+    };
 
-            console.log(json);
-            // FIXME
+    private _handleVideoAnalysisSubmit() {
+        this._videoAnalysisButton.addEventListener('click', async () => {
+            const video = await this._getCurrentVideo();
+
+            const response = await fetch('http://127.0.0.1:5000/analyze_video', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ video }),
+            });
+
         });
     };
 
@@ -90,6 +115,20 @@ export class EditorHandler {
         return canvas.toDataURL('image/jpeg');
     };
 
+    private async _getCurrentVideo() {
+        const reader = new FileReader();
+        reader.readAsDataURL(this._filePicker.files[0]);
+        return new Promise((resolve, reject) => {
+            reader.onload = () => {
+                resolve(reader.result);
+            };
+
+            reader.onerror = (error) => {
+                reject(`Error: ${error}`);
+            };
+        });
+    }
+
     private _handleTimeUpdate() {
         const seconds = Math.floor(this._video.currentTime) % 60;
         const minutes = Math.floor(this._video.currentTime / 60);
@@ -97,6 +136,8 @@ export class EditorHandler {
 
         this._timeSlider.value = Math.floor(this._video.currentTime / this._getProgressBarStepInSeconds()).toString();
         this._currentTime.innerText = formattedTime;
+
+        this._stateStore.videoTime = this._video.currentTime;
     };
 
     private _setPlayingButtonState() {
@@ -108,6 +149,6 @@ export class EditorHandler {
     }
 
     private _getProgressBarStepInSeconds() {
-        return this._video.duration / EditorHandler.TIME_PICKER_STEPS;
+        return this._video.duration / VideoPlayerHandler.TIME_PICKER_STEPS;
     }
 }

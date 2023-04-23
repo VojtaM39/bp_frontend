@@ -1,5 +1,5 @@
 import { StateStore } from './state-store.js';
-import { PlayerTypes } from './types.js';
+import {PlayerFrameInformation, PlayerTypes, StrokeTypes} from './types.js';
 
 export class OverlayHandler {
     private static readonly PLAYER_EDGES = [
@@ -23,6 +23,8 @@ export class OverlayHandler {
         [12, 13],
         [13, 14],
     ];
+
+    private static readonly STROKE_TEXT_OFFSET = 4;
 
     private _stateStore: StateStore;
     private _canvas: HTMLCanvasElement;
@@ -48,6 +50,7 @@ export class OverlayHandler {
     private _drawCourt(context: CanvasRenderingContext2D) {
         const court = this._stateStore.court;
 
+        context.lineWidth = 3;
         context.strokeStyle = 'red';
         context.beginPath();
 
@@ -80,16 +83,18 @@ export class OverlayHandler {
         this._drawPlayer(context, this._stateStore.players[PlayerTypes.BOTTOM]?.[frame]);
     }
 
-    private _drawPlayer(context: CanvasRenderingContext2D, player?: number[][]) {
+    private _drawPlayer(context: CanvasRenderingContext2D, player?: PlayerFrameInformation) {
         if (!player) {
             return;
         }
 
+        context.lineWidth = 3;
         context.strokeStyle = 'blue';
+        context.fillStyle = 'blue';
 
         for (const edge of OverlayHandler.PLAYER_EDGES) {
-            const point1 = player[edge[0]];
-            const point2 = player[edge[1]];
+            const point1 = player.skeleton[edge[0]];
+            const point2 = player.skeleton[edge[1]];
 
             if (!point1 || !point2) {
                 continue;
@@ -103,5 +108,48 @@ export class OverlayHandler {
             context.closePath();
             context.stroke();
         }
+
+        context.textAlign = "left";
+        context.font = "14px sans-serif";
+
+        const leftTopCorner = this._getLeftTopCorner(player.skeleton);
+        const textX = leftTopCorner[0] * this._canvas.width;
+        const textY = leftTopCorner[1] * this._canvas.height - OverlayHandler.STROKE_TEXT_OFFSET;
+        const strokeText = this._getStrokeText(player.stroke);
+
+        context.fillText(strokeText, textX, textY);
+    }
+
+    private _getLeftTopCorner(coordinates: number[][]) {
+        let left = 1;
+        let top = 1;
+
+        for (const coordinate of coordinates) {
+            if (coordinate[0] < left) {
+                left = coordinate[0];
+            }
+
+            if (coordinate[1] < top) {
+                top = coordinate[1];
+            }
+        }
+
+        return [left, top];
+    }
+
+    private _getStrokeText(stroke: StrokeTypes) {
+        if (stroke === StrokeTypes.BOTTOM) {
+            return 'BOT';
+        }
+
+        if (stroke === StrokeTypes.TOP) {
+            return 'TOP';
+        }
+
+        if (stroke === StrokeTypes.RETURN) {
+            return 'RET';
+        }
+
+        return '';
     }
 }

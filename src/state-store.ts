@@ -1,7 +1,7 @@
-import { PlayerTypes } from './types.js';
+import { PlayerFrameInformation, PlayerTypes } from './types.js';
 
 type PlayersMap = {
-    [key in PlayerTypes]: number[][][] | null;
+    [key in PlayerTypes]: (PlayerFrameInformation | null)[]
 }
 
 export class StateStore {

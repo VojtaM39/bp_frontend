@@ -158,7 +158,6 @@ export class VideoPlayerHandler {
     }
 
     private _getEndpointUrl(edpoint) {
-        const full = location.protocol + '//' + location.host;
-        return `${full}/${edpoint}`;
+        return `${location.protocol}//${location.hostname}:5000/${edpoint}`;
     }
 }

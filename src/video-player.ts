@@ -83,15 +83,20 @@ export class VideoPlayerHandler {
     private _handleVideoAnalysisSubmit() {
         this._videoAnalysisButton.addEventListener('click', async () => {
             const video = await this._getCurrentVideo();
+            const court = this._stateStore.court;
 
             const response = await fetch('http://127.0.0.1:5000/analyze_video', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ video }),
+                body: JSON.stringify({ video, court }),
             });
 
+            const { players_data, fps } = await response.json();
+
+            this._stateStore.players = players_data;
+            this._stateStore.fps = fps;
         });
     };
 

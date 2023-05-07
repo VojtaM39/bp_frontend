@@ -1,14 +1,15 @@
 import { PlayerFrameInformation, PlayerTypes } from './types.js';
 
-type PlayersMap = {
-    [key in PlayerTypes]: (PlayerFrameInformation | null)[]
-}
+type PlayersData = {
+    [key in PlayerTypes]: PlayerFrameInformation
+}[]
 
 export class StateStore {
     private _court: number[][] | null = null;
     private _videoTime: number | null = null;
     private _videoLength: number | null = null;
-    private _players: PlayersMap | null = null;
+    private _players: PlayersData | null = null;
+    private _fps: number | null = null;
     private _observerMap: Record<string, Function[]> = {};
 
     public registerObserver(property: string, observer: (value: unknown) => unknown) {
@@ -46,13 +47,22 @@ export class StateStore {
         this._notifyObservers('videoLength', value);
     }
 
-    get players(): PlayersMap | null {
+    get players(): PlayersData | null {
         return this._players
     }
 
-    set players(value: PlayersMap | null) {
+    set players(value: PlayersData | null) {
         this._players = value;
         this._notifyObservers('players', value);
+    }
+
+    get fps(): number | null {
+        return this._fps
+    }
+
+    set fps(value: number | null) {
+        this._fps = value;
+        this._notifyObservers('fps', value);
     }
 
     private _notifyObservers(property: string, value: unknown) {

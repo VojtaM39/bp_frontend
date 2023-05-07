@@ -1,18 +1,22 @@
 export enum PlayerTypes {
-    BOTTOM = 'bottom',
-    TOP = 'top',
+    BOTTOM = 'bottom_player',
+    TOP = 'top_player',
 }
 
 
 export enum StrokeTypes {
-    NOTHING,
-    BOTTOM,
-    TOP,
-    RETURN,
+    NOTHING = 0,
+    FOREHAND = 1,
+    BACKHAND = 2,
+    LOB = 3,
+    SERVE = 4,
+    SMASH = 5,
+    RETURN = 6,
+
 }
 
 export interface PlayerFrameInformation {
-    skeleton: number[][];
+    pose: number[][];
     position: number[] | null,
     stroke: StrokeTypes,
 }

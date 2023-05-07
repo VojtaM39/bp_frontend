@@ -37,6 +37,7 @@ export class OverlayHandler {
     public registerEventHandlers() {
         this._stateStore.registerObserver('court', this._redrawCanvas.bind(this));
         this._stateStore.registerObserver('players', this._redrawCanvas.bind(this));
+        this._stateStore.registerObserver('videoTime', this._redrawCanvas.bind(this));
     }
 
     private _redrawCanvas() {
@@ -49,6 +50,9 @@ export class OverlayHandler {
 
     private _drawCourt(context: CanvasRenderingContext2D) {
         const court = this._stateStore.court;
+        if (!court) {
+            return;
+        }
 
         context.lineWidth = 3;
         context.strokeStyle = 'red';
@@ -76,11 +80,13 @@ export class OverlayHandler {
             return;
         }
 
-        const frame = Math.floor(this._stateStore.videoTime / this._stateStore.videoLength);
+        const frame = Math.floor(this._stateStore.videoTime * this._stateStore.fps);
 
-        console.log(this._stateStore);
-        this._drawPlayer(context, this._stateStore.players[PlayerTypes.TOP]?.[frame]);
-        this._drawPlayer(context, this._stateStore.players[PlayerTypes.BOTTOM]?.[frame]);
+        const topPlayer = this._stateStore.players[frame]?.[PlayerTypes.TOP];
+        const bottomPlayer = this._stateStore.players[frame]?.[PlayerTypes.BOTTOM];
+
+        this._drawPlayer(context, topPlayer);
+        this._drawPlayer(context, bottomPlayer);
     }
 
     private _drawPlayer(context: CanvasRenderingContext2D, player?: PlayerFrameInformation) {
@@ -93,8 +99,8 @@ export class OverlayHandler {
         context.fillStyle = 'blue';
 
         for (const edge of OverlayHandler.PLAYER_EDGES) {
-            const point1 = player.skeleton[edge[0]];
-            const point2 = player.skeleton[edge[1]];
+            const point1 = player.pose[edge[0]];
+            const point2 = player.pose[edge[1]];
 
             if (!point1 || !point2) {
                 continue;
@@ -112,7 +118,7 @@ export class OverlayHandler {
         context.textAlign = "left";
         context.font = "14px sans-serif";
 
-        const leftTopCorner = this._getLeftTopCorner(player.skeleton);
+        const leftTopCorner = this._getLeftTopCorner(player.pose);
         const textX = leftTopCorner[0] * this._canvas.width;
         const textY = leftTopCorner[1] * this._canvas.height - OverlayHandler.STROKE_TEXT_OFFSET;
         const strokeText = this._getStrokeText(player.stroke);
@@ -138,16 +144,32 @@ export class OverlayHandler {
     }
 
     private _getStrokeText(stroke: StrokeTypes) {
-        if (stroke === StrokeTypes.BOTTOM) {
-            return 'BOT';
+        if (stroke === StrokeTypes.NOTHING) {
+            return 'Nothing';
         }
 
-        if (stroke === StrokeTypes.TOP) {
-            return 'TOP';
+        if (stroke === StrokeTypes.FOREHAND) {
+            return 'Forehand';
+        }
+
+        if (stroke === StrokeTypes.BACKHAND) {
+            return 'Backhand';
+        }
+
+        if (stroke === StrokeTypes.LOB) {
+            return 'Lob';
+        }
+
+        if (stroke === StrokeTypes.SERVE) {
+            return 'Serve';
+        }
+
+        if (stroke === StrokeTypes.SMASH) {
+            return 'Smash';
         }
 
         if (stroke === StrokeTypes.RETURN) {
-            return 'RET';
+            return 'Return';
         }
 
         return '';

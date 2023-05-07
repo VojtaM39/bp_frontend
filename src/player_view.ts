@@ -3,6 +3,9 @@ import { PlayerTypes } from './types.js';
 
 export class PlayerViewHandler {
     private static readonly CROSS_OFFSET = 3;
+    private static readonly SIDELINE_OFFSET = 0.075;
+    private static readonly BASELINE_OFFSET = 0.0568;
+    private static readonly SERVICE_LINE_OFFSET = 0.3522;
 
     private _stateStore: StateStore;
     private _canvas: HTMLCanvasElement;
@@ -10,6 +13,7 @@ export class PlayerViewHandler {
     constructor(stateStore: StateStore) {
         this._stateStore = stateStore;
         this._canvas = document.getElementById('court-view') as HTMLCanvasElement;
+        this._redrawCanvas();
     }
 
     public registerEventHandlers() {
@@ -22,7 +26,50 @@ export class PlayerViewHandler {
         const context = this._canvas.getContext('2d');
         context.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
+        this._drawLines(context);
         this._drawPlayerPositions(context);
+    }
+
+    private _drawLines(context: CanvasRenderingContext2D) {
+        context.lineWidth = 1;
+        context.strokeStyle = 'black';
+        context.fillStyle = 'black';
+
+        context.beginPath();
+
+        context.moveTo(0, 0.5 * this._canvas.height);
+        context.lineTo(this._canvas.width, 0.5 * this._canvas.height);
+
+        context.moveTo(PlayerViewHandler.SIDELINE_OFFSET * this._canvas.width, 0);
+        context.lineTo(PlayerViewHandler.SIDELINE_OFFSET * this._canvas.width, this._canvas.height);
+
+        context.moveTo((1 - PlayerViewHandler.SIDELINE_OFFSET) * this._canvas.width, 0);
+        context.lineTo((1 - PlayerViewHandler.SIDELINE_OFFSET) * this._canvas.width, this._canvas.height);
+
+
+        context.moveTo(0, PlayerViewHandler.BASELINE_OFFSET * this._canvas.height);
+        context.lineTo(this._canvas.width, PlayerViewHandler.BASELINE_OFFSET * this._canvas.height);
+
+        context.moveTo(0, (1 - PlayerViewHandler.BASELINE_OFFSET) * this._canvas.height);
+        context.lineTo(this._canvas.width, (1 - PlayerViewHandler.BASELINE_OFFSET) * this._canvas.height);
+
+
+        context.moveTo(0, PlayerViewHandler.SERVICE_LINE_OFFSET * this._canvas.height);
+        context.lineTo(this._canvas.width, PlayerViewHandler.SERVICE_LINE_OFFSET * this._canvas.height);
+
+        context.moveTo(0, (1 - PlayerViewHandler.SERVICE_LINE_OFFSET) * this._canvas.height);
+        context.lineTo(this._canvas.width, (1 - PlayerViewHandler.SERVICE_LINE_OFFSET) * this._canvas.height);
+
+
+        context.moveTo(0.5 * this._canvas.width, 0);
+        context.lineTo(0.5 * this._canvas.width, PlayerViewHandler.SERVICE_LINE_OFFSET * this._canvas.height);
+
+        context.moveTo(0.5 * this._canvas.width, this._canvas.height);
+        context.lineTo(0.5 * this._canvas.width, (1 - PlayerViewHandler.SERVICE_LINE_OFFSET) * this._canvas.height);
+
+
+        context.closePath();
+        context.stroke();
     }
 
     private _drawPlayerPositions(context: CanvasRenderingContext2D) {
@@ -42,6 +89,7 @@ export class PlayerViewHandler {
 
         positions.forEach((position) => this._drawPlayerPosition(context, position));
     }
+
 
     private _drawPlayerPosition(context: CanvasRenderingContext2D, position: number[] | null) {
         if (!position) {

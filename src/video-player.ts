@@ -67,6 +67,12 @@ export class VideoPlayerHandler {
 
     private _handleCourtRecognitionSubmit() {
         this._recognizeCourtButton.addEventListener('click', async () => {
+            if (this._video.readyState !== 4) {
+                return;
+            }
+
+            this._recognizeCourtButton.setAttribute('disabled', 'true');
+
             const frame = this._getCurrentFrame();
 
             const response = await fetch(this._getEndpointUrl('recognize_court'), {
@@ -78,11 +84,19 @@ export class VideoPlayerHandler {
             });
             const { court } = await response.json();
             this._stateStore.court = court;
+
+            this._recognizeCourtButton.removeAttribute('disabled');
         });
     };
 
     private _handleVideoAnalysisSubmit() {
         this._videoAnalysisButton.addEventListener('click', async () => {
+            if (this._video.readyState !== 4) {
+                return;
+            }
+
+            this._videoAnalysisButton.setAttribute('disabled', 'true');
+
             const video = await this._getCurrentVideo();
             const court = this._stateStore.court;
 
@@ -98,6 +112,8 @@ export class VideoPlayerHandler {
 
             this._stateStore.players = players_data;
             this._stateStore.fps = fps;
+
+            this._videoAnalysisButton.removeAttribute('disabled');
         });
     };
 

@@ -68,7 +68,7 @@ export class VideoPlayerHandler {
         this._recognizeCourtButton.addEventListener('click', async () => {
             const frame = this._getCurrentFrame();
 
-            const response = await fetch('http://127.0.0.1:5000/recognize_court', {
+            const response = await fetch(this._getEndpointUrl('recognize_court'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export class VideoPlayerHandler {
             const video = await this._getCurrentVideo();
             const court = this._stateStore.court;
 
-            const response = await fetch('http://127.0.0.1:5000/analyze_video', {
+            const response = await fetch(this._getEndpointUrl('analyze_video'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -155,5 +155,10 @@ export class VideoPlayerHandler {
 
     private _getProgressBarStepInSeconds() {
         return this._video.duration / VideoPlayerHandler.TIME_PICKER_STEPS;
+    }
+
+    private _getEndpointUrl(edpoint) {
+        const full = location.protocol + '//' + location.host;
+        return `${full}/${edpoint}`;
     }
 }

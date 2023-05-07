@@ -48,6 +48,7 @@ export class VideoPlayerHandler {
         }
     }
 
+
     // https://developer.mozilla.org/en-US/docs/Web/Guide/Audio_and_video_delivery/Video_player_styling_basics
     private _handleVideoControls() {
         this._video.addEventListener('play', this._setPlayingButtonState.bind(this), false);
@@ -157,7 +158,8 @@ export class VideoPlayerHandler {
         return this._video.duration / VideoPlayerHandler.TIME_PICKER_STEPS;
     }
 
-    private _getEndpointUrl(edpoint) {
-        return `${location.protocol}//${location.hostname}:5000/${edpoint}`;
+    private _getEndpointUrl(endpoint) {
+        return `http://198.176.96.249:5000/${endpoint}`;
+        return `${location.protocol}//${location.hostname}:5000/${endpoint}`;
     }
 }

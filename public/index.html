@@ -6,23 +6,31 @@
     </head>
     <body>
         <div class="main-container">
-            <label for="file-picker">Choose a file</label>
-            <input type="file" id="file-picker" />
+            <div class="left-side">
+                <label for="file-picker">Choose a file</label>
+                <input type="file" id="file-picker" />
 
-            <div class="video-player-container">
-                <div class="video-container">
-                    <canvas id="match-overlay" width="800" height="600"></canvas>
-                    <video id="match-video"></video>
+                <div class="video-player-container">
+                    <div class="video-container">
+                        <canvas id="match-overlay" width="800" height="600"></canvas>
+                        <video id="match-video"></video>
+                    </div>
+
+                    <div id="video-controls" class="controls" data-state="hidden">
+                        <button id="play-button" type="button" data-state="pause">Play/Pause</button>
+                        <input type="range" id="time-slider" min="0" max="99" step="1" value="0" />
+                        <div id="current-time">00:00</div>
+                    </div>
                 </div>
 
-                <div id="video-controls" class="controls" data-state="hidden">
-                    <button id="play-button" type="button" data-state="pause">Play/Pause</button>
-                    <input type="range" id="time-slider" min="0" max="99" step="1" value="0" />
-                    <div id="current-time">00:00</div>
-                </div>
+                <input type="button" id="recognize-court" value="Get court" />
+                <input type="button" id="video-analysis" value="Analyze video" />
             </div>
-            <input type="button" id="recognize-court" value="Get court" />
-            <input type="button" id="video-analysis" value="Analyze video" />
+
+            <div class="right-side">
+                <canvas id="court-view" width="500" height="500"></canvas>
+            </div>
         </div>
+
     </body>
 </html>

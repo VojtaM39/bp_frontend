@@ -181,7 +181,7 @@ export class VideoPlayerHandler {
     }
 
     private _getEndpointUrl(endpoint) {
-        return `http://198.176.96.249:5000/${endpoint}`;
+        // return `http://198.176.96.249:5000/${endpoint}`;
         return `${location.protocol}//${location.hostname}:5000/${endpoint}`;
     }
 }

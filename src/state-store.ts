@@ -1,3 +1,10 @@
+/**
+ * Bachelor thesis: Vojtech Maslan
+ *
+ * Class StateStore is responsible for storing the state of the application.
+ * Implements the observer pattern and on change of the properties notifies all observers.
+ */
+
 import { PlayerFrameInformation, PlayerTypes } from './types.js';
 
 type PlayersData = {

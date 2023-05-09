@@ -1,3 +1,9 @@
+/**
+ * Bachelor thesis: Vojtech Maslan
+ *
+ * Class VidePlayerHandler is responsible for handling the video player and API communication.
+ */
+
 import { StateStore } from './state-store.js';
 
 export class VideoPlayerHandler {
@@ -175,7 +181,7 @@ export class VideoPlayerHandler {
     }
 
     private _getEndpointUrl(endpoint) {
-        // return `http://198.176.96.249:5000/${endpoint}`;
+        return `http://198.176.96.249:5000/${endpoint}`;
         return `${location.protocol}//${location.hostname}:5000/${endpoint}`;
     }
 }

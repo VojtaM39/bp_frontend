@@ -1,5 +1,11 @@
+/**
+ * Bachelor thesis: Vojtech Maslan
+ *
+ * Class OverlayHandler is responsible for drawing the overlay on top of the video.
+ */
+
 import { StateStore } from './state-store.js';
-import {PlayerFrameInformation, PlayerTypes, StrokeTypes} from './types.js';
+import { PlayerFrameInformation, PlayerTypes, StrokeTypes, StrokeTypesAgg } from './types.js';
 
 export class OverlayHandler {
     private static readonly PLAYER_EDGES = [
@@ -121,7 +127,7 @@ export class OverlayHandler {
         const leftTopCorner = this._getLeftTopCorner(player.pose);
         const textX = leftTopCorner[0] * this._canvas.width;
         const textY = leftTopCorner[1] * this._canvas.height - OverlayHandler.STROKE_TEXT_OFFSET;
-        const strokeText = this._getStrokeText(player.stroke);
+        const strokeText = this._getStrokeTextAgg(player.stroke);
 
         context.fillText(strokeText, textX, textY);
     }
@@ -141,6 +147,26 @@ export class OverlayHandler {
         }
 
         return [left, top];
+    }
+
+    private _getStrokeTextAgg(stroke: StrokeTypesAgg) {
+        if (stroke === StrokeTypesAgg.NOTHING) {
+            return 'Nothing';
+        }
+
+        if (stroke === StrokeTypesAgg.BOTTOM) {
+            return 'Bottom';
+        }
+
+        if (stroke === StrokeTypesAgg.SMASH) {
+            return 'Smash';
+        }
+
+        if (stroke === StrokeTypesAgg.RETURN) {
+            return 'Return';
+        }
+
+        return '';
     }
 
     private _getStrokeText(stroke: StrokeTypes) {

@@ -1,3 +1,9 @@
+/**
+ * Bachelor thesis: Vojtech Maslan
+ *
+ * Class PlayerViewHandler is responsible for drawing the player positions on the court.
+ */
+
 import { StateStore } from './state-store.js';
 import { PlayerTypes } from './types.js';
 

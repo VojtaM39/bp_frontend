@@ -10,11 +10,9 @@
   },
   "scripts": {
     "css": "node-sass scss/main.scss -o dist",
-    "css:watch": "npm run css && node-sass scss/main.scss -wo dist",
-    "start": "npm run start:dev",
-    "start:dev": "ts-node-esm -T src/main.ts",
-    "build": "npm run scss && tsc",
-    "serve": "tsc && node dist/server.js"
+    "build": "npm run css && tsc",
+    "serve": "node dist/server.js",
+    "start": "npm run build && npm run serve"
   },
   "author": "Vojtech Maslan",
   "license": "ISC",

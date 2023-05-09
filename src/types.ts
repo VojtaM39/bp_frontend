@@ -1,3 +1,9 @@
+/**
+ * Bachelor thesis: Vojtech Maslan
+ *
+ * Static values
+ */
+
 export enum PlayerTypes {
     BOTTOM = 'bottom_player',
     TOP = 'top_player',
@@ -15,8 +21,16 @@ export enum StrokeTypes {
 
 }
 
+export enum StrokeTypesAgg {
+    NOTHING = 0,
+    BOTTOM = 1,
+    SMASH = 2,
+    RETURN = 3,
+
+}
+
 export interface PlayerFrameInformation {
     pose: number[][];
     position: number[] | null,
-    stroke: StrokeTypes,
+    stroke: StrokeTypesAgg,
 }

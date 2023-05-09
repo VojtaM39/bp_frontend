@@ -1,7 +1,7 @@
 import { StateStore } from './state-store.js';
 import { VideoPlayerHandler } from './video-player.js';
 import { OverlayHandler } from './overlay.js';
-import { PlayerViewHandler } from './player_view.js';
+import { PlayerViewHandler } from './player-view.js';
 
 document.addEventListener("DOMContentLoaded", function(){
     const stateStore = new StateStore();
